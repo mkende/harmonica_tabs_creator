@@ -37,10 +37,8 @@ Readonly my %tunings => (
 Readonly my @keys_offset => split / /, q(C Db D Eb E F F# G Ab A Bb B);
 
 sub sheet_to_tab ($sheet) {
-  my @notes = split /\s+/, $sheet;
-
   my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
-  my @tones = map { $note_converter->convert($_) } @notes;
+  my @tones = $note_converter->convert($sheet);
 
   my %all_matches;
   while (my ($k, $v) = each %tunings) {

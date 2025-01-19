@@ -104,22 +104,33 @@ sub alteration_for_note ($self, $note) {
 # Note that calls to convert can return nothing. The general pattern is to call
 # that in a sub passed to a map call.
 
-sub convert ($self, $symbol) {
-  if ($symbol =~ m/^(<|>)$/) {
-    $self->{default_octave} += $symbol eq '>' ? 1 : -1;
-    return;
-  }
+sub convert ($self, $symbols) {
+  my @out;
+  while ((pos($symbols) // 0) < length($symbols)) {
+    next if $symbols =~ m/\G\s+/gc;
 
-  if ($symbol =~ m/^K(b{0,7}|#{0,7})?$/) {
-    $self->{key} = $SIGNATURE_TO_KEY{$1};
-    return;
-  }
+    if ($symbols =~ m/\G(<|>)/gc) {
+      $self->{default_octave} += $1 eq '>' ? 1 : -1;
+      next;
+    }
 
-  $symbol =~ m/^(do|Do|ré|Ré|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si|[A-H])([#+b-]?)(-?\d+)?$/ or die "Invalid note: $_";
-  my ($note, $accidental, $octave) = (ucfirst($1), $2, $3 // $self->{default_octave});
-  my $base = 12 * ($octave - 4) + note_to_tone($note);
-  my $alteration = $accidental ? $ACCIDENTAL_TO_ALTERATION{$accidental} : $self->alteration_for_note($note);
-  return $base + $alteration;
+    if ($symbols =~ m/\GK(b{0,7}|#{0,7})?/gc) {
+      $self->{key} = $SIGNATURE_TO_KEY{$1};
+      next;
+    }
+
+    # TODO: print only the relevant part of symbols here
+    if ($symbols =~ m/\G(do|Do|ré|Ré|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si|[A-H])([#+b-]?)(-?\d+)?/gc) {
+      my ($note, $accidental, $octave) = (ucfirst($1), $2, $3 // $self->{default_octave});
+      my $base = 12 * ($octave - 4) + note_to_tone($note);
+      my $alteration = $accidental ? $ACCIDENTAL_TO_ALTERATION{$accidental} : $self->alteration_for_note($note);
+      push @out, $base + $alteration;
+      next;
+    }
+
+    die sprintf "Invalid syntax at position %d in: %s\n", pos($symbols), $symbols;
+  }
+  return wantarray ? @out : \@out;
 }
 
 1;

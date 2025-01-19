@@ -1,0 +1,51 @@
+#!/usr/bin/env perl
+
+use 5.036;
+use strict;
+use warnings;
+use utf8;
+
+use Encode::Locale;
+use Music::Harmonica::TabsCreator 'sheet_to_tab';
+
+if (-t STDIN) {
+  binmode STDIN, ':encoding(console_in)';  # console_in is set by the Encode::Locale module.
+} else {
+  binmode STDIN, ':encoding(UTF-8)';
+}
+if (-t STDOUT) {
+  binmode STDOUT, ':encoding(console_out)';  # console_out is set by the Encode::Locale module.
+} else {
+  binmode STDOUT, ':encoding(UTF-8)';
+}
+if (-t STDERR) {
+  binmode STDERR, ':encoding(console_out)';  # console_out is set by the Encode::Locale module.
+} else {
+  binmode STDOUT, ':encoding(UTF-8)';
+}
+
+my $sheet;
+{
+    local $/ = undef;
+    $sheet = <>;
+}
+
+use Data::Dumper;
+my %tabs = sheet_to_tab($sheet);
+
+unless (%tabs) {
+  say "No tabs found";
+  exit 0;
+}
+
+for my $type (sort keys %tabs) {
+  say "For ${type} harmonicas:";
+  for my $key (sort keys %{$tabs{$type}}) {
+    say "  in the key of ${key}:";
+    for my $tab (@{$tabs{$type}{$key}}) {
+      say "    ".join(' ', @{$tab});
+    }
+  }
+}
+
+__END__

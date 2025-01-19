@@ -62,7 +62,10 @@ sub sheet_to_tab ($sheet) {
 }
 
 sub sheet_to_tab_rendered ($sheet) {
-  my %tabs = sheet_to_tab($sheet);
+  my %tabs = eval { sheet_to_tab($sheet) };
+  if ($@) {
+    return $@;
+  }
 
   if (!%tabs) {
     return 'No tabs found';

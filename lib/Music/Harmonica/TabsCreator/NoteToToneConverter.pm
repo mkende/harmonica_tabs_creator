@@ -149,7 +149,7 @@ sub convert ($self, $symbols) {
       next;
     }
 
-    my $pos = pos($symbols);
+    my $pos = pos($symbols)  // 0;
     die "Invalid syntax at position ${pos} in: ${symbols}\n";
   }
   return wantarray ? @out : \@out;

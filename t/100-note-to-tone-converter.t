@@ -31,4 +31,7 @@ is (convert('KbBEA'), [22, 16, 21]);
 is (convert('Do do Fa F A'), [12, 12, 17, 17, 21]);
 is (convert('DodoFaFA'), [12, 12, 17, 17, 21]);
 
+is (convert('C # foo C'), [12, '# foo C']);
+is (convert("C # foo\nD"), [12, "# foo\n", 14]);
+
 done_testing;

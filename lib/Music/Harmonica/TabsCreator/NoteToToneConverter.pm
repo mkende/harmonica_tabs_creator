@@ -123,7 +123,7 @@ sub convert ($self, $symbols) {
       next;
     }
 
-    if ($symbols =~ m/\G(#.*?)$/mgc) {
+    if ($symbols =~ m/\G(#.*?(?:\v|$))/mgc) {
       push @out, $1;
       next;
     }

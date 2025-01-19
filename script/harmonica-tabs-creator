@@ -5,23 +5,25 @@ use strict;
 use warnings;
 use utf8;
 
-use Encode::Locale;
 use Music::Harmonica::TabsCreator 'sheet_to_tab';
 
-if (-t STDIN) {
-  binmode STDIN, ':encoding(console_in)';  # console_in is set by the Encode::Locale module.
-} else {
-  binmode STDIN, ':encoding(UTF-8)';
-}
-if (-t STDOUT) {
-  binmode STDOUT, ':encoding(console_out)';  # console_out is set by the Encode::Locale module.
-} else {
-  binmode STDOUT, ':encoding(UTF-8)';
-}
-if (-t STDERR) {
-  binmode STDERR, ':encoding(console_out)';  # console_out is set by the Encode::Locale module.
-} else {
-  binmode STDOUT, ':encoding(UTF-8)';
+BEGIN {
+  my $has_locale = eval "use Encode::Locale; 1";
+  if (-t STDIN && $has_locale) {
+    binmode STDIN, ':encoding(console_in)';  # console_in is set by the Encode::Locale module.
+  } else {
+    binmode STDIN, ':encoding(UTF-8)';
+  }
+  if (-t STDOUT && $has_locale) {
+    binmode STDOUT, ':encoding(console_out)';  # console_out is set by the Encode::Locale module.
+  } else {
+    binmode STDOUT, ':encoding(UTF-8)';
+  }
+  if (-t STDERR && $has_locale) {
+    binmode STDERR, ':encoding(console_out)';  # console_out is set by the Encode::Locale module.
+  } else {
+    binmode STDOUT, ':encoding(UTF-8)';
+  }
 }
 
 my $sheet;

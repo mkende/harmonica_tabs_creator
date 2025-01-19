@@ -115,7 +115,7 @@ sub convert ($self, $symbol) {
     return;
   }
 
-  $symbol =~ m/^(do|ré|mi|fa|sol|la|si|[A-H])([#+b-]?)(-?\d+)?$/ or die "Invalid note: $_";
+  $symbol =~ m/^(do|Do|ré|Ré|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si|[A-H])([#+b-]?)(-?\d+)?$/ or die "Invalid note: $_";
   my ($note, $accidental, $octave) = (ucfirst($1), $2, $3 // $self->{default_octave});
   my $base = 12 * ($octave - 4) + note_to_tone($note);
   my $alteration = $accidental ? $ACCIDENTAL_TO_ALTERATION{$accidental} : $self->alteration_for_note($note);

@@ -27,4 +27,6 @@ is ([convert('Kb B E A')], [22, 16, 21]);
 is ([convert('Kbb B E A')], [22, 15, 21]);
 is ([convert('Kbbb B E A')], [22, 15, 20]);
 
+is ([convert('Do do Fa F A')], [12, 12, 17, 17, 21]);
+
 done_testing;

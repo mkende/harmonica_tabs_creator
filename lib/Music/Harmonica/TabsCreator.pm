@@ -9,6 +9,7 @@ use Exporter qw(import);
 use List::Util qw(min max);
 use Music::Harmonica::TabsCreator::NoteToToneConverter;
 use Readonly;
+use Scalar::Util qw(looks_like_number);
 
 our $VERSION = '0.01';
 
@@ -71,7 +72,8 @@ sub match_notes_to_tuning ($tones, $tuning) {
   my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
   my @scale_tones = map { $note_converter->convert($_) } @{$tuning->{notes}};
   my ($scale_min, $scale_max) = (min(@scale_tones), max(@scale_tones));
-  my ($tones_min, $tones_max) = (min(@{$tones}), max(@{$tones}));
+  my @real_tones = grep { looks_like_number($_) } @{$tones};
+  my ($tones_min, $tones_max) = (min(@real_tones), max(@real_tones));
   my %scale_tones = map { $scale_tones[$_] => $tuning->{tab}[$_] } 0 .. $#scale_tones;
   my ($o_min, $o_max) = ($scale_min - $tones_min, $scale_max - $tones_max);
   my @matches;
@@ -85,8 +87,12 @@ sub match_notes_to_tuning ($tones, $tuning) {
 sub tab_from_tones($tones, $offset, %scale_tones) {
   my @tab;
   for my $t (@{$tones}) {
-    return unless exists $scale_tones{$t + $offset};
-    push @tab, $scale_tones{$t + $offset};
+    if (looks_like_number($t)) {
+      return unless exists $scale_tones{$t + $offset};
+      push @tab, $scale_tones{$t + $offset};
+    } else {
+      push @tab, $t;
+    }
   }
   return @tab;
 }

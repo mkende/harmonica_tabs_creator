@@ -116,7 +116,17 @@ sub alteration_for_note ($self, $note) {
 sub convert ($self, $symbols) {
   my @out;
   while ((pos($symbols) // 0) < length($symbols)) {
-    next if $symbols =~ m/\G\s+/gc;
+    next if $symbols =~ m/\G\h+/gc;
+
+    if ($symbols =~ m/\G(\v+)/gc) {
+      push @out, $1;
+      next;
+    }
+
+    if ($symbols =~ m/\G(#.*?)$/mgc) {
+      push @out, $1;
+      next;
+    }
 
     if ($symbols =~ m/\G(<|>)/gc) {
       $self->{default_octave} += $1 eq '>' ? 1 : -1;

@@ -72,3 +72,7 @@ minimum_regex_length_to_complain_about = 30
 
 [ValuesAndExpressions::ProhibitMagicNumbers]
 allowed_values = -1..2
+
+# This should be in the default above.
+[Variables::ProhibitPunctuationVars]
+allow = $@ $!

@@ -13,7 +13,7 @@ WriteMakefile(
     DISTNAME         => 'Music-Harmonica-TabsCreator',
     AUTHOR           => q{Mathias Kende <mathias@cpan.org>},
     VERSION_FROM     => 'lib/Music/Harmonica/TabsCreator.pm',
-    ABSTRACT         => q{Convert sheet music into harmonica tabs},
+    ABSTRACT         => q{Convert tunes into harmonica tabs},
     LICENSE          => 'mit',
     EXE_FILES        => ['script/harmonica-tabs-creator',],
     MIN_PERL_VERSION => '5.036',
@@ -30,7 +30,7 @@ WriteMakefile(
       no_index => {
         directory => [ 'local', 'vendor', 't' ],
       },
-      keywords => ['harmonica','tab','tabs','tablature','music','transposition',],
+      keywords => ['harmonica','tab','tabs','tablature','music','tune','transposition',],
       resources => {
         repository => {
           type => 'git',

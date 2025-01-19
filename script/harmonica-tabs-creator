@@ -5,10 +5,13 @@ use strict;
 use warnings;
 use utf8;
 
-use Music::Harmonica::TabsCreator 'sheet_to_tab';
+use English;
+use Music::Harmonica::TabsCreator 'sheet_to_tab', 'get_tuning';
+
+our $VERSION = '0.01';
 
 BEGIN {
-  my $has_locale = eval "use Encode::Locale; 1";
+  my $has_locale = eval { require Encode::Locale; Encode::Locale->import(); 1 };
   if (-t STDIN && $has_locale) {
     binmode STDIN, ':encoding(console_in)';  # console_in is set by the Encode::Locale module.
   } else {
@@ -28,24 +31,25 @@ BEGIN {
 
 my $sheet;
 {
-    local $/ = undef;
-    $sheet = <>;
+  local $INPUT_RECORD_SEPARATOR = undef;
+  $sheet = <>;
 }
 
 use Data::Dumper;
 my %tabs = sheet_to_tab($sheet);
 
-unless (%tabs) {
-  say "No tabs found";
+if (!%tabs) {
+  say 'No tabs found';
   exit 0;
 }
 
 for my $type (sort keys %tabs) {
-  say "For ${type} harmonicas:";
+  my %details = get_tuning($type);
+  printf "For %s %s harmonicas:\n", join(' ', @{$details{tags}}), $details{name};
   for my $key (sort keys %{$tabs{$type}}) {
     say "  in the key of ${key}:";
     for my $tab (@{$tabs{$type}{$key}}) {
-      say "    ".join(' ', @{$tab});
+      say '    '.join(' ', @{$tab});
     }
   }
 }

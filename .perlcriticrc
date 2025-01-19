@@ -60,3 +60,15 @@ minimum_regex_length_to_complain_about = 30
 [-ValuesAndExpressions::ProhibitNoisyQuotes]
 
 # End of the template. You can add custom content below this line.
+
+# That policy is bad because the recommended modules are not granular enough for
+# our purpose. However we might want to create a module to package our use of
+# the -t test in scripts.
+[-InputOutput::ProhibitInteractiveTest]
+
+# Disable this until https://github.com/Perl-Critic/Perl-Critic/issues/1082 is
+# fixed.
+[-ValuesAndExpressions::ProhibitEmptyQuotes]
+
+[ValuesAndExpressions::ProhibitMagicNumbers]
+allowed_values = -1..2

@@ -30,7 +30,7 @@ WriteMakefile(
       no_index => {
         directory => [ 'local', 'vendor', 't' ],
       },
-      keywords => ['harmonica','tabs','music',],
+      keywords => ['harmonica','tab','tabs','tablature','music','transposition',],
       resources => {
         repository => {
           type => 'git',

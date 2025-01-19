@@ -140,8 +140,11 @@ sub convert ($self, $symbols) {
 
     # TODO: print only the relevant part of symbols here
     # There is a bug here that A-3 won’t be parsed as the - will be taken for a flat.
-    if ($symbols =~ m/\G ( ${NOTE_NAME_RE} ) ( [#+b-]? )( -?\d+ )?/xgc) {
-      my ($note, $accidental, $octave) = (ucfirst($1), $2, $3 // $self->{default_octave});
+    if ($symbols =~ m/\G ( ${NOTE_NAME_RE} ) ( [#+b-]? )( -?\d+ )? (,+|'+)?/xgc) {
+      my ($note, $accidental, $octave, $rel_octave) = (ucfirst($1), $2, $3 // $self->{default_octave}, $4);
+      if ($rel_octave) {
+        $octave += length($rel_octave) * ($rel_octave =~ /,/ ? -1 : 1);
+      }
       my $base = $TONES_PER_SCALE * ($octave - $BASE_OCTAVE) + note_to_tone($note);
       my $alteration =
           $accidental ? $ACCIDENTAL_TO_ALTERATION{$accidental} : $self->alteration_for_note($note);
@@ -149,7 +152,7 @@ sub convert ($self, $symbols) {
       next;
     }
 
-    my $pos = pos($symbols)  // 0;
+    my $pos = pos($symbols) // 0;
     die "Invalid syntax at position ${pos} in: ${symbols}\n";
   }
   return wantarray ? @out : \@out;

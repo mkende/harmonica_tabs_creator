@@ -22,4 +22,9 @@ sub convert {
 
 is ([convert('C > C < < A')], [12, 24, 9]);
 
+is ([convert('B E A')], [23, 16, 21]);
+is ([convert('Kb B E A')], [22, 16, 21]);
+is ([convert('Kbb B E A')], [22, 15, 21]);
+is ([convert('Kbbb B E A')], [22, 15, 20]);
+
 done_testing;

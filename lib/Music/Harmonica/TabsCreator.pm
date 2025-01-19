@@ -18,7 +18,8 @@ our @EXPORT_OK = qw(sheet_to_tab);
 Readonly my %tunings => (
   # Written in the key of C to match the default key used in the note_to_tone
   # function.
-  richter_no_bend => {
+  richter_harmonica_no_bend => {
+    tags => [qw(diatonic 10-holes)],
     name => '10 holes diatonique Richter-tuned no bend',
     # We arbitrarily keep only +3 and never use -2.
     # We might need to change that if we wanted to support chords.
@@ -26,6 +27,7 @@ Readonly my %tunings => (
     notes => [qw(C4 D4 E4 G4 B4 C5 D5 E5 F5 G5 A5 C6 B5 E6 D6 G6 F6 C7 A6)],
   },
   richter => {
+    tags => [qw(diatonic 10-holes)],
     name => '10 holes diatonique Richter-tuned with bending',
     # We arbitrarily keep only +3 and never use -2.
     tab => [qw(  1  -1 -1' 2  -2' -2" 3  -3 -3' -3" -3"' 4  -4 -4' 5  -5 6  -6 -6' 7  -7 8  8'  -8 9  9'  -9 10 10' 10" -10)],

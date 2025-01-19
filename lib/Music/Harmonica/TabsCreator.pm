@@ -13,7 +13,7 @@ use Scalar::Util qw(looks_like_number);
 
 our $VERSION = '0.01';
 
-our @EXPORT_OK = qw(sheet_to_tab get_tuning);
+our @EXPORT_OK = qw(sheet_to_tab get_tuning sheet_to_tab_rendered);
 
 # Options to add:
 # - print B as H (international convention), but probably not Bb which stays Bb.
@@ -59,6 +59,29 @@ sub sheet_to_tab ($sheet) {
     }
   }
   return %all_matches;
+}
+
+sub sheet_to_tab_rendered ($sheet) {
+  my %tabs = sheet_to_tab($sheet);
+
+  if (!%tabs) {
+    return 'No tabs found';
+  }
+
+  my $out;
+
+  for my $type (sort keys %tabs) {
+    my %details = get_tuning($type);
+    $out .= sprintf "For %s %s harmonicas:\n", join(' ', @{$details{tags}}), $details{name};
+    for my $key (sort keys %{$tabs{$type}}) {
+      $out .= "  In the key of ${key}:\n";
+      for my $tab (@{$tabs{$type}{$key}}) {
+        $out .= '    '.join(' ', map { m/^\v+$/ ? $_.'   ' : $_ } @{$tab})."\n";
+      }
+    }
+  }
+
+  return $out;
 }
 
 sub get_tuning ($key) {

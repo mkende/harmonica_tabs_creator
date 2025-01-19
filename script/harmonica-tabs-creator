@@ -6,7 +6,7 @@ use warnings;
 use utf8;
 
 use English;
-use Music::Harmonica::TabsCreator 'sheet_to_tab', 'get_tuning';
+use Music::Harmonica::TabsCreator 'sheet_to_tab_rendered';
 
 our $VERSION = '0.01';
 
@@ -35,23 +35,8 @@ my $sheet;
   $sheet = <>;
 }
 
-use Data::Dumper;
-my %tabs = sheet_to_tab($sheet);
+say sheet_to_tab_rendered($sheet);
 
-if (!%tabs) {
-  say 'No tabs found';
-  exit 0;
-}
-
-for my $type (sort keys %tabs) {
-  my %details = get_tuning($type);
-  printf "For %s %s harmonicas:\n", join(' ', @{$details{tags}}), $details{name};
-  for my $key (sort keys %{$tabs{$type}}) {
-    say "  in the key of ${key}:";
-    for my $tab (@{$tabs{$type}{$key}}) {
-      say '    '.join(' ', @{$tab});
-    }
-  }
-}
+exit 0;
 
 __END__

@@ -43,10 +43,8 @@ GetOptions(
   'help|h' => sub { pod2usage(-verbose => 1, -exitval => 0) },
   'helpfull|help-full|man' => sub { pod2usage(-verbose => 2, -exitval => 0) },
   'version|v' => sub { VersionMessage(-exitval => 0) },
-  'transpose=s' => \$transpose,
+  'transpose|transpose-from|t=s' => \$transpose,
 ) or pod2usage(-verbose => 0, -exitval => 2);
-
-
 
 my $input;
 {
@@ -76,7 +74,9 @@ harmonica-tabs-creator – Convert tunes into harmonica tabs.
 
 =head1 SYNOPSIS
 
-  harmonica-tabs-creator < input-tune.txt > output-tab.txt
+  harmonica-tabs-creator < input-tune.txt
+
+  harmonica-tabs-creator --transpose-from=richter:C < input-tab.txt
 
 =head1 DESCRIPTION
 

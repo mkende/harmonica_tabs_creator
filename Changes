@@ -1,4 +1,8 @@
 Revision history for Perl distribution Music-Harmonica-Tabs
 
+0.02 - ??
+ - Improve the sort order of the output
+ - Add transposition support
+
 0.01 - 2025-01-19
  - Initial release

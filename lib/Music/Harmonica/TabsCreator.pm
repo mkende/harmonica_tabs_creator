@@ -9,12 +9,14 @@ use English;
 use Exporter qw(import);
 use List::Util qw(min max);
 use Music::Harmonica::TabsCreator::NoteToToneConverter;
+use Music::Harmonica::TabsCreator::TabParser;
 use Readonly;
 use Scalar::Util qw(looks_like_number);
 
 our $VERSION = '0.01';
 
-our @EXPORT_OK = qw(tune_to_tab get_harmonica_details tune_to_tab_rendered);
+our @EXPORT_OK = qw(tune_to_tab get_harmonica_details tune_to_tab_rendered
+                    transpose_tab transpose_tab_rendered list_tunings);
 
 # Options to add:
 # - print B as H (international convention), but probably not Bb which stays Bb.
@@ -51,10 +53,28 @@ Readonly my @keys_offset => split / /, q(C Db D Eb E F F# G Ab A Bb B);
 sub tune_to_tab ($sheet) {
   my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
   my @tones = $note_converter->convert($sheet);
+  return find_matching_tuning(\@tones);
+}
 
+sub transpose_tab ($tab, $tuning_id, $key) {
+  # TODO: error handling for missing tuning
+  die "Unknown tuning: $tuning_id" unless exists $tunings{$tuning_id};
+  my $tuning = $tunings{$tuning_id};
+  my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
+  my %tab_to_tones = map { $tuning->{tab}[$_] => $note_converter->convert($tuning->{notes}[$_]) } 0 .. $#{$tuning->{tab}};
+  my $parser = Music::Harmonica::TabsCreator::TabParser->new(\%tab_to_tones);
+  my @tones = $parser->parse($tab);
+  my @key_tone = eval { $note_converter->convert($key) };
+  return "Invalid key: $key" if $@ || @key_tone != 1;
+  my $key_tone = $key_tone[0];
+  @tones = map { looks_like_number($_) ?  $_ + $key_tone : $_ } @tones;
+  return find_matching_tuning(\@tones);
+}
+
+sub find_matching_tuning ($tones) {
   my %all_matches;
   while (my ($k, $v) = each %tunings) {
-    my @matches = match_notes_to_tuning(\@tones, $v);
+    my @matches = match_notes_to_tuning($tones, $v);
     for my $m (@matches) {
       push @{$all_matches{$k}{$m->[1]}}, $m->[0];
     }
@@ -64,10 +84,17 @@ sub tune_to_tab ($sheet) {
 
 sub tune_to_tab_rendered ($sheet) {
   my %tabs = eval { tune_to_tab($sheet) };
-  if ($@) {
-    return $@;
-  }
+  return $@ if $@;
+  return render_tabs(%tabs);
+}
 
+sub transpose_tab_rendered ($tab, $tuning, $key) {
+  my %tabs = eval { transpose_tab($tab, $tuning, $key) };
+  return $@ if $@;
+  return render_tabs(%tabs);
+}
+
+sub render_tabs (%tabs) {
   if (!%tabs) {
     return 'No tabs found';
   }
@@ -90,6 +117,10 @@ sub tune_to_tab_rendered ($sheet) {
 
 sub get_harmonica_details ($key) {
   return %{$tunings{$key}}{qw(name tags)};
+}
+
+sub list_tunings () {
+  return map { { id => $_, name => $tunings{$_}{name}, tags => $tunings{$_}{tags} } } keys %tunings;
 }
 
 # Given all the tones (with C0 = 0) of a melody and the data of a given

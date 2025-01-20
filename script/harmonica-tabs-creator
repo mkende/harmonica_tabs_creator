@@ -7,13 +7,20 @@ use utf8;
 
 use lib '/usr/local/lib/perl5';  # To be used together with the cpanm command given in the README.md file.
 
+use Encode;
 use English;
-use Music::Harmonica::TabsCreator 'tune_to_tab_rendered';
+use Getopt::Long qw(VersionMessage :config no_ignore_case bundling);
+use Music::Harmonica::TabsCreator 'tune_to_tab_rendered', 'transpose_tab_rendered';
+use Pod::Usage;
 
 our $VERSION = $Music::Harmonica::TabsCreator::VERSION; ## no critic (ProhibitComplexVersion,RequireConstantVersion)
 
+
 BEGIN {
   my $has_locale = eval { require Encode::Locale; Encode::Locale->import(); 1 };
+  if ($has_locale) {
+    Encode::Locale::decode_argv(Encode::FB_WARN);
+  }
   if (-t STDIN && $has_locale) {
     binmode STDIN, ':encoding(console_in)';  # console_in is set by the Encode::Locale module.
   } else {
@@ -31,13 +38,29 @@ BEGIN {
   }
 }
 
-my $sheet;
+my $transpose;
+GetOptions(
+  'help|h' => sub { pod2usage(-verbose => 1, -exitval => 0) },
+  'helpfull|help-full|man' => sub { pod2usage(-verbose => 2, -exitval => 0) },
+  'version|v' => sub { VersionMessage(-exitval => 0) },
+  'transpose=s' => \$transpose,
+) or pod2usage(-verbose => 0, -exitval => 2);
+
+
+
+my $input;
 {
   local $INPUT_RECORD_SEPARATOR = undef;
-  $sheet = <>;
+  $input = <>;
 }
 
-say tune_to_tab_rendered($sheet);
+if (defined $transpose) {
+  $transpose =~ m/^(.*?)(:?:.*)?$/;
+  my ($tuning, $key) = ($1, $2 // 'C');
+  say transpose_tab_rendered($input, $tuning, $key);
+} else {
+  say tune_to_tab_rendered($input);
+}
 
 exit 0;
 

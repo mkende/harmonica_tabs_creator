@@ -8,7 +8,7 @@ use utf8;
 use List::Util qw(any);
 use Readonly;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 # This class converts written note (accepting various syntax for the notes) into
 # tones (degrees) relative to the key of C4.
@@ -115,7 +115,8 @@ sub alteration_for_note ($self, $note) {
 
 sub convert ($self, $symbols) {
   my @out;
-  while ((pos($symbols) // 0) < length($symbols)) {
+  pos($symbols) = 0;
+  while (pos($symbols) < length($symbols)) {
     next if $symbols =~ m/\G\h+/gc;
 
     if ($symbols =~ m/\G(\v+)/gc) {
@@ -138,7 +139,6 @@ sub convert ($self, $symbols) {
       next;
     }
 
-    # TODO: print only the relevant part of symbols here
     # There is a bug here that A-3 won’t be parsed as the - will be taken for a flat.
     if ($symbols =~ m/\G ( ${NOTE_NAME_RE} ) ( [#+b-]? )( -?\d+ )? (,+|'+)?/xgc) {
       my ($note, $accidental, $octave, $rel_octave) =
@@ -153,7 +153,8 @@ sub convert ($self, $symbols) {
       next;
     }
 
-    my $pos = pos($symbols) // 0;
+    my $pos = pos($symbols);
+    # TODO: print only the relevant part of symbols here
     die "Invalid syntax at position ${pos} in: ${symbols}\n";
   }
   return wantarray ? @out : \@out;

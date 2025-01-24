@@ -15,7 +15,7 @@ use Scalar::Util qw(looks_like_number);
 
 our $VERSION = '0.01';
 
-our @EXPORT_OK = qw(tune_to_tab get_harmonica_details tune_to_tab_rendered
+our @EXPORT_OK = qw(tune_to_tab get_tuning_details tune_to_tab_rendered
                     transpose_tab transpose_tab_rendered list_tunings);
 
 # Options to add:
@@ -134,7 +134,7 @@ sub render_tabs (%tabs) {
   my $out;
 
   for my $type (sort keys %tabs) {
-    my %details = get_harmonica_details($type);
+    my %details = get_tuning_details($type);
     $out .= sprintf "For %s %s harmonicas:\n", join(' ', @{$details{tags}}), $details{name};
     for my $key (sort keys %{$tabs{$type}}) {
       $out .= "  In the key of ${key}:\n";
@@ -147,12 +147,12 @@ sub render_tabs (%tabs) {
   return $out;
 }
 
-sub get_harmonica_details ($key) {
+sub get_tuning_details ($key) {
   return %{$ALL_TUNINGS{$key}}{qw(name tags)};
 }
 
 sub list_tunings () {
-  return map { { id => $_, name => $ALL_TUNINGS{$_}{name}, tags => $ALL_TUNINGS{$_}{tags} } } keys %ALL_TUNINGS;
+  return map { { id => $_, name => $ALL_TUNINGS{$_}{name}, tags => $ALL_TUNINGS{$_}{tags} } } sort keys %ALL_TUNINGS;
 }
 
 # Given all the tones (with C0 = 0) of a melody and the data of a given

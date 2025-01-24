@@ -10,7 +10,7 @@ use lib '/usr/local/lib/perl5';  # To be used together with the cpanm command gi
 use Encode;
 use English;
 use Getopt::Long qw(VersionMessage :config no_ignore_case bundling);
-use Music::Harmonica::TabsCreator 'tune_to_tab_rendered', 'transpose_tab_rendered';
+use Music::Harmonica::TabsCreator qw(tune_to_tab_rendered transpose_tab_rendered list_tunings);
 use Pod::Usage;
 
 our $VERSION = $Music::Harmonica::TabsCreator::VERSION; ## no critic (ProhibitComplexVersion,RequireConstantVersion)
@@ -40,6 +40,7 @@ BEGIN {
 
 my $transpose;
 my $max_bends = 0;
+my $list_tunings = 0;
 
 GetOptions(
   'help|h' => sub { pod2usage(-verbose => 1, -exitval => 0) },
@@ -47,7 +48,15 @@ GetOptions(
   'version|v' => sub { VersionMessage(-exitval => 0) },
   'transpose|transpose-from|t=s' => \$transpose,
   'max-bends|b=i' => \$max_bends,
+  'list-tunings|l' => sub { $list_tunings = 1 },
 ) or pod2usage(-verbose => 0, -exitval => 2);
+
+if ($list_tunings) {
+  for my $t (list_tunings()) {
+    printf "- %s: %s (%s)\n", $t->{id}, $t->{name}, join(', ', @{$t->{tags}});
+  }
+  exit 0;
+}
 
 my $input;
 {
@@ -102,13 +111,17 @@ the input format.
 Transpose from an input tab, rather than from sheet music. The tab syntax must
 match the syntax used in the output of this program. The arguments to this
 option are the ID of an harmonica tuning and the key of the input tab. The list
-of supported IDs can be found with the C<--list-tunings> option (TODO). If the key is
+of supported IDs can be found with the C<--list-tunings> option. If the key is
 omitted, the key of C is assumed for the input.
 
 =item --max-bends=NUMBER, -b
 
 Maximum number of half-step of bending allowed to use in the generated tabs.
 Default to 0.
+
+=item --list-tunings, -l
+
+List the supported harmonica tunings.
 
 =back
 

@@ -39,11 +39,14 @@ BEGIN {
 }
 
 my $transpose;
+my $max_bends = 0;
+
 GetOptions(
   'help|h' => sub { pod2usage(-verbose => 1, -exitval => 0) },
   'helpfull|help-full|man' => sub { pod2usage(-verbose => 2, -exitval => 0) },
   'version|v' => sub { VersionMessage(-exitval => 0) },
   'transpose|transpose-from|t=s' => \$transpose,
+  'max-bends|b=i' => \$max_bends,
 ) or pod2usage(-verbose => 0, -exitval => 2);
 
 my $input;
@@ -55,9 +58,9 @@ my $input;
 if (defined $transpose) {
   $transpose =~ m/^(.*?)(:?:.*)?$/;
   my ($tuning, $key) = ($1, $2 // 'C');
-  say transpose_tab_rendered($input, $tuning, $key);
+  say transpose_tab_rendered($input, $tuning, $key, max_bends => $max_bends);
 } else {
-  say tune_to_tab_rendered($input);
+  say tune_to_tab_rendered($input, max_bends => $max_bends);
 }
 
 exit 0;
@@ -89,6 +92,25 @@ standard input and will write its output on the standard output.
 See the
 L<GitHub page|https://github.com/mkende/harmonica_tabs_creator> for details on
 the input format.
+
+=head1 OPTIONS
+
+=over
+
+=item --transpose-from=RICHTER:KEY, -t
+
+Transpose from an input tab, rather than from sheet music. The tab syntax must
+match the syntax used in the output of this program. The arguments to this
+option are the ID of an harmonica tuning and the key of the input tab. The list
+of supported IDs can be found with the C<--list-tunings> option (TODO). If the key is
+omitted, the key of C is assumed for the input.
+
+=item --max-bends=NUMBER, -b
+
+Maximum number of half-step of bending allowed to use in the generated tabs.
+Default to 0.
+
+=back
 
 =head1 AUTHOR
 

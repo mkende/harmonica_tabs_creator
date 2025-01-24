@@ -23,9 +23,6 @@ our @EXPORT_OK = qw(tune_to_tab get_harmonica_details tune_to_tab_rendered
 
 Readonly my $TONES_PER_SCALE => 12;
 
-# TODO: add the -2 hole and test that its value is not used when generating
-# tabs (because for the same tone the +3 comes after and will overwrite it), but
-# that it can be used to read a tab.
 # TODO: don’t use separate tunings with and without bending, add the bending
 # information in the main tuning and generate the missing data (e.g. how many
 # max half-step can be bent on a given hole, plus how many is the user
@@ -33,23 +30,26 @@ Readonly my $TONES_PER_SCALE => 12;
 Readonly my %tunings => (
   # Written in the key of C to match the default key used in the note_to_tone
   # function.
+  # Note that when we have the same note appear multiple time (like -2 and 3 in
+  # Richter scale) we always use only the last appearancee one when rendering a 
+  # tab (but other appearances are still used when reading a tab).
   richter => {
     tags => [qw(diatonic 10-holes)],
     name => 'Richter-tuned no bend',
-    # We arbitrarily keep only +3 and never use -2.
+    # Although we We arbitrarily keep only +3 and never use -2.
     # We might need to change that if we wanted to support chords.
-    tab => [qw(  1  -1 2  3 -3  4 -4 5  -5 6  -6 7  -7 8  -8 9  -9 10 -10)],
-    notes => [qw(C4 D4 E4 G4 B4 C5 D5 E5 F5 G5 A5 C6 B5 E6 D6 G6 F6 C7 A6)],
+    tab => [qw(  1  -1 2 -2 3 -3  4 -4 5  -5 6  -6 7  -7 8  -8 9  -9 10 -10)],
+    notes => [qw(C4 D4 E4 G4 G4 B4 C5 D5 E5 F5 G5 A5 C6 B5 E6 D6 G6 F6 C7 A6)],
   },
   richter_with_bend => {
     tags => [qw(diatonic 10-holes)],
     name => 'Richter-tuned with bending',
     # We arbitrarily keep only +3 and never use -2.
     tab => [
-      qw(  1  -1 -1' 2  -2' -2" 3  -3 -3' -3" -3"' 4  -4 -4' 5  -5 6  -6 -6' 7  -7 8  8'  -8 9  9'  -9 10 10' 10" -10)
+      qw(  1  -1 -1' 2  -2 -2' -2" 3  -3 -3' -3" -3"' 4  -4 -4' 5  -5 6  -6 -6' 7  -7 8  8'  -8 9  9'  -9 10 10' 10" -10)
     ],
     notes => [
-      qw(C4 D4 Db4 E4 Gb4 F4  G4 B4 Bb4 A4  Ab4  C5 D5 Db5 E5 F5 G5 A5 Ab5 C6 B5 E6 Eb6 D6 G6 Gb6 F6 C7 B6  Bb6 A6)
+      qw(C4 D4 Db4 E4 G4 Gb4 F4  G4 B4 Bb4 A4  Ab4  C5 D5 Db5 E5 F5 G5 A5 Ab5 C6 B5 E6 Eb6 D6 G6 Gb6 F6 C7 B6  Bb6 A6)
     ],
   },
   harmonic_minor => {
@@ -57,8 +57,8 @@ Readonly my %tunings => (
     name => 'Harmonic minor',
     # We arbitrarily keep only +3 and never use -2.
     # We might need to change that if we wanted to support chords.
-    tab =>      [qw(1  -1 2   3  -3 4 -4  5   -5 6  -6  7  -7 8   -8 9  -9 10 -10)],
-    notes =>    [qw(C4 D4 Eb4 G4 B4 C5 D5 Eb5 F5 G5 Ab5 C6 B5 Eb6 D6 G6 F6 C7 Ab6)],
+    tab =>      [qw(1  -1 2  -2 3  -3 4 -4  5   -5 6  -6  7  -7 8   -8 9  -9 10 -10)],
+    notes =>    [qw(C4 D4 Eb4 G4 G4 B4 C5 D5 Eb5 F5 G5 Ab5 C6 B5 Eb6 D6 G6 F6 C7 Ab6)],
   },
 );
 

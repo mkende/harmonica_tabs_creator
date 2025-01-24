@@ -15,7 +15,6 @@ use Pod::Usage;
 
 our $VERSION = $Music::Harmonica::TabsCreator::VERSION; ## no critic (ProhibitComplexVersion,RequireConstantVersion)
 
-
 BEGIN {
   my $has_locale = eval { require Encode::Locale; Encode::Locale->import(); 1 };
   if ($has_locale) {
@@ -66,7 +65,8 @@ my $input;
 }
 
 if (defined $transpose) {
-  $transpose =~ m/^(.*?)(:?:.*)?$/;
+  $transpose =~ m/^(.*?)(:?:.*)?$/
+      or die "Invalid argument for the --transpose option: ${transpose}\n";
   my ($tuning, $key) = ($1, $2 // 'C');
   say transpose_tab_rendered($input, $tuning, $key, max_bends => $max_bends);
 } else {

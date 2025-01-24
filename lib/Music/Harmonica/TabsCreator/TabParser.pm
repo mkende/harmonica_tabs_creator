@@ -14,7 +14,7 @@ our $VERSION = '0.01';
 
 sub new ($class, $tab_to_tones) {
   # We order the keys by length, so that we match the longest ones first.
-  my $re = join('|', map { quotemeta } sort { length $b <=> length $a } keys %$tab_to_tones);
+  my $re = join('|', map { quotemeta } sort { length $b <=> length $a } keys %{$tab_to_tones});
   my $self = bless {
     tab_to_tones => $tab_to_tones,
     tab_re => qr/$re/,
@@ -25,7 +25,7 @@ sub new ($class, $tab_to_tones) {
 sub parse ($self, $tab) {
   my @out;
   pos($tab) = 0;
-  while (pos($tab)  < length($tab)) {
+  while (pos($tab) < length($tab)) {
     next if $tab =~ m/\G\h+/gc;
 
     if ($tab =~ m/\G(\v+)/gc) {

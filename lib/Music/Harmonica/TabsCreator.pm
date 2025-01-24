@@ -16,7 +16,7 @@ use Scalar::Util qw(looks_like_number);
 our $VERSION = '0.01';
 
 our @EXPORT_OK = qw(tune_to_tab get_tuning_details tune_to_tab_rendered
-                    transpose_tab transpose_tab_rendered list_tunings);
+    transpose_tab transpose_tab_rendered list_tunings);
 
 # Options to add:
 # - print B as H (international convention), but probably not Bb which stays Bb.
@@ -31,7 +31,7 @@ Readonly my %ALL_TUNINGS => (
   # Written in the key of C to match the default key used in the note_to_tone
   # function.
   # Note that when we have the same note appear multiple time (like -2 and 3 in
-  # Richter scale) we always use only the last appearancee one when rendering a 
+  # Richter scale) we always use only the last appearance one when rendering a
   # tab (but other appearances are still used when reading a tab).
   richter => {
     tags => [qw(diatonic 10-holes)],
@@ -47,7 +47,7 @@ Readonly my %ALL_TUNINGS => (
     name => 'Harmonic minor',
     # We arbitrarily keep only +3 and never use -2.
     # We might need to change that if we wanted to support chords.
-    tab =>   [qw(1  -1 2   -2 3  -3 4 -4  5   -5 6  -6  7  -7 8   -8 9  -9 10 -10)],
+    tab => [qw(1  -1 2   -2 3  -3 4 -4  5   -5 6  -6  7  -7 8   -8 9  -9 10 -10)],
     notes => [qw(C4 D4 Eb4 G4 G4 B4 C5 D5 Eb5 F5 G5 Ab5 C6 B5 Eb6 D6 G6 F6 C7 Ab6)],
     bends => [qw(0  1  0   3  0  3  0  1  0   1  0  0   0  0  0   0  1  0  3  0)],
   },
@@ -67,17 +67,18 @@ sub tune_to_tab ($sheet, %options) {
 
 sub transpose_tab ($tab, $tuning_id, $key, %options) {
   # TODO: error handling for missing tuning
-  die "Unknown tuning: $tuning_id" unless exists $ALL_TUNINGS{$tuning_id};
+  die "Unknown tuning: $tuning_id\n" unless exists $ALL_TUNINGS{$tuning_id};
   # For the input, we accept any level of bending.
   my $tuning = generate_tunings($MAX_BENDS)->{$tuning_id};
   my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
-  my %tab_to_tones = map { $tuning->{tab}[$_] => $note_converter->convert($tuning->{notes}[$_]) } 0 .. $#{$tuning->{tab}};
+  my %tab_to_tones = map { $tuning->{tab}[$_] => $note_converter->convert($tuning->{notes}[$_]) }
+      0 .. $#{$tuning->{tab}};
   my $parser = Music::Harmonica::TabsCreator::TabParser->new(\%tab_to_tones);
   my @tones = $parser->parse($tab);
   my @key_tone = eval { $note_converter->convert($key) };
   return "Invalid key: $key" if $@ || @key_tone != 1;
   my $key_tone = $key_tone[0];
-  @tones = map { looks_like_number($_) ?  $_ + $key_tone : $_ } @tones;
+  @tones = map { looks_like_number($_) ? $_ + $key_tone : $_ } @tones;
   my $tunings = generate_tunings($options{max_bends} // 0);
   return find_matching_tuning(\@tones, $tunings);
 }
@@ -93,10 +94,10 @@ sub generate_tunings ($max_bends) {
       my $note = $v->{notes}[$i];
       my $tab = $v->{tab}[$i];
       for my $b (0 .. min($max_bends, $v->{bends}[$i])) {
-        my $bent = (substr $note, 0, 1) . ('b' x $b) . (substr $note, 1);
+        my $bent = (substr $note, 0, 1).('b' x $b).(substr $note, 1);
         push @{$out{$k}{notes}}, $bent;
         # TODO: this won’t work once we have chromatic harmonicas
-        push @{$out{$k}{tab}}, $tab . ('"' x ($b / 2)) . ("'" x ($b % 2));
+        push @{$out{$k}{tab}}, $tab.('"' x ($b / 2)).("'" x ($b % 2));
       }
     }
   }
@@ -152,7 +153,8 @@ sub get_tuning_details ($key) {
 }
 
 sub list_tunings () {
-  return map { { id => $_, name => $ALL_TUNINGS{$_}{name}, tags => $ALL_TUNINGS{$_}{tags} } } sort keys %ALL_TUNINGS;
+  return map { {id => $_, name => $ALL_TUNINGS{$_}{name}, tags => $ALL_TUNINGS{$_}{tags}} }
+      sort keys %ALL_TUNINGS;
 }
 
 # Given all the tones (with C0 = 0) of a melody and the data of a given

@@ -35,7 +35,7 @@ Readonly my %ALL_TUNINGS => (
   # tab (but other appearances are still used when reading a tab).
   richter => {
     tags => [qw(diatonic 10-holes)],
-    name => 'Richter-tuned',
+    name => 'Richter',
     # Although we We arbitrarily keep only +3 and never use -2.
     # We might need to change that if we wanted to support chords.
     tab => [qw(  1  -1 2 -2  3  -3  4 -4 5  -5 6  -6 7  -7 8  -8 9  -9 10 -10)],
@@ -135,7 +135,7 @@ sub render_tabs (%tabs) {
 
   for my $type (sort keys %tabs) {
     my %details = get_tuning_details($type);
-    $out .= sprintf "For %s %s harmonicas:\n", join(' ', @{$details{tags}}), $details{name};
+    $out .= sprintf "For %s %s tuning harmonicas:\n", join(' ', @{$details{tags}}), $details{name};
     for my $key (sort keys %{$tabs{$type}}) {
       $out .= "  In the key of ${key}:\n";
       for my $tab (@{$tabs{$type}{$key}}) {

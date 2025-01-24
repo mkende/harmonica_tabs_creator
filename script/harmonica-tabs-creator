@@ -52,8 +52,9 @@ GetOptions(
 ) or pod2usage(-verbose => 0, -exitval => 2);
 
 if ($list_tunings) {
+  print "Supported tunings (id: description (tags)):\n";
   for my $t (list_tunings()) {
-    printf "- %s: %s (%s)\n", $t->{id}, $t->{name}, join(', ', @{$t->{tags}});
+    printf "- %s: %s tuning (%s)\n", $t->{id}, $t->{name}, join(', ', @{$t->{tags}});
   }
   exit 0;
 }

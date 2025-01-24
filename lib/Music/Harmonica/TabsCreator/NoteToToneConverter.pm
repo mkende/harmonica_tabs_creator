@@ -93,6 +93,11 @@ Readonly my $NOTE_NAME_RE => qr/ do|Do|ré|Ré|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si |
 Readonly my $BASE_OCTAVE => 4;
 Readonly my $TONES_PER_SCALE => 12;
 
+sub accidental_to_alteration ($acc) {
+  # We know that $acc is a single character possibly repeated.
+  return $ACCIDENTAL_TO_ALTERATION{substr $acc, 0, 1} * length($acc);
+}
+
 sub note_to_tone ($note) {
   return $NOTE_TO_TONE{$note};
 }
@@ -140,7 +145,7 @@ sub convert ($self, $symbols) {
     }
 
     # There is a bug here that A-3 won’t be parsed as the - will be taken for a flat.
-    if ($symbols =~ m/\G ( ${NOTE_NAME_RE} ) ( [#+b-]? )( -?\d+ )? (,+|'+)?/xgc) {
+    if ($symbols =~ m/\G ( ${NOTE_NAME_RE} ) ( \#+ | \++ | b+ | \-* ) ( \d+ )? (,+|'+)?/xgc) {
       my ($note, $accidental, $octave, $rel_octave) =
           (ucfirst($1), $2, $3 // $self->{default_octave}, $4);
       if ($rel_octave) {
@@ -148,7 +153,7 @@ sub convert ($self, $symbols) {
       }
       my $base = $TONES_PER_SCALE * ($octave - $BASE_OCTAVE) + note_to_tone($note);
       my $alteration =
-          $accidental ? $ACCIDENTAL_TO_ALTERATION{$accidental} : $self->alteration_for_note($note);
+          $accidental ? accidental_to_alteration($accidental) : $self->alteration_for_note($note);
       push @out, $base + $alteration;
       next;
     }

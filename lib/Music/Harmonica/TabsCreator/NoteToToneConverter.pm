@@ -44,6 +44,9 @@ Readonly my %NOTE_TO_TONE => (
   H => 11,
 );
 
+# TODO support unicode representation of the sharp (♯), flat (♭), natural (♮)
+# and clef (𝄞) signs.
+
 Readonly my %ACCIDENTAL_TO_ALTERATION => (
   '#' => 1,
   '+' => 1,

@@ -135,9 +135,14 @@ sub render_tabs (%tabs) {
     for my $key (sort keys %{$tabs{$type}}) {
       $out .= "  In the key of ${key}:\n";
       for my $tab (@{$tabs{$type}{$key}}) {
-        my $str_tab = join(' ', map { m/^\v+$/ ? $_.'   ' : $_ } @{$tab});
+        my $str_tab;
+        my $was_nl = 1;
+        for my $t (@{$tab}) {
+          $str_tab .= ($was_nl ? '    ' : ' ').$t;
+          $was_nl = $t =~ m/\v\z/;
+        }
         $str_tab =~ s/(\h|\v)+\Z//;
-        $out .= "    ${str_tab}\n\n";
+        $out .= ${str_tab}."\n\n";
       }
     }
   }

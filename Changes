@@ -1,5 +1,8 @@
 Revision history for Perl distribution Music-Harmonica-Tabs
 
+0.05 - ??
+ - Minor rendering improvements.
+
 0.04 - 2025-01-25
  - Support re in addition to ré for the D note in the input music.
  - Support Ut in addition to do, for the C note.

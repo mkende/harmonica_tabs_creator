@@ -8,7 +8,7 @@ use utf8;
 use List::Util qw(any);
 use Readonly;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 # This class converts written note (accepting various syntax for the notes) into
 # tones (degrees) relative to the key of C4.
@@ -28,6 +28,7 @@ Readonly my %NOTE_TO_TONE => (
   C => 0,
   Do => 0,
   D => 2,
+  'Re' => 2,
   'Ré' => 2,
   E => 4,
   Mi => 4,
@@ -88,7 +89,7 @@ Readonly my %KEY_TO_ALTERATION => (
   'C#' => 7,
 );
 
-Readonly my $NOTE_NAME_RE => qr/ do|Do|ré|Ré|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si | [A-H] /x;
+Readonly my $NOTE_NAME_RE => qr/ do|Do|ré|Ré|re|Re|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si | [A-H] /x;
 
 Readonly my $BASE_OCTAVE => 4;
 Readonly my $TONES_PER_SCALE => 12;

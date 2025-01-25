@@ -1,6 +1,9 @@
 Revision history for Perl distribution Music-Harmonica-Tabs
 
-0.03 - ??
+0.04 - ??
+ - Support re in addition to ré for the D note in the input music.
+
+0.03 - 2025-01-25
  - Improve rendering of the tabs with consistent new lines.
  - Allows to filter the tunings that are used to generate a tab.
 

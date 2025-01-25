@@ -141,6 +141,7 @@ sub convert ($self, $symbols) {
       next;
     }
 
+    # TODO: Support specifying the key with a note name, e.g. KF#.
     if ($symbols =~ m/\GK(b{0,7}|#{0,7})?/gc) {
       $self->{key} = $SIGNATURE_TO_KEY{$1};
       next;
@@ -161,8 +162,10 @@ sub convert ($self, $symbols) {
     }
 
     my $pos = pos($symbols);
+    substr $symbols, $pos, 0, '-->';
+    $pos++;
     # TODO: print only the relevant part of symbols here
-    die "Invalid syntax at position ${pos} in: ${symbols}\n";
+    die "Invalid syntax in the input at character ${pos}: ${symbols}\n";
   }
   return wantarray ? @out : \@out;
 }

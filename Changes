@@ -4,6 +4,7 @@ Revision history for Perl distribution Music-Harmonica-Tabs
  - Support re in addition to ré for the D note in the input music.
  - Support Ut in addition to do, for the C note.
  - Support ’ in addition to ' to temporarily increase the current octave.
+ - Improve error messages.
 
 0.03 - 2025-01-25
  - Improve rendering of the tabs with consistent new lines.

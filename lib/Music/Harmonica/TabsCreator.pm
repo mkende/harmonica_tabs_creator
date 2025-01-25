@@ -23,10 +23,6 @@ our @EXPORT_OK = qw(tune_to_tab get_tuning_details tune_to_tab_rendered
 
 Readonly my $TONES_PER_SCALE => 12;
 
-# TODO: don’t use separate tunings with and without bending, add the bending
-# information in the main tuning and generate the missing data (e.g. how many
-# max half-step can be bent on a given hole, plus how many is the user
-# accepting).
 Readonly my %ALL_TUNINGS => (
   # Written in the key of C to match the default key used in the note_to_tone
   # function.
@@ -66,7 +62,6 @@ sub tune_to_tab ($sheet, %options) {
 }
 
 sub transpose_tab ($tab, $tuning_id, $key, %options) {
-  # TODO: error handling for missing tuning
   die "Unknown tuning: $tuning_id\n" unless exists $ALL_TUNINGS{$tuning_id};
   # For the input, we accept any level of bending.
   my $tuning = generate_tunings($MAX_BENDS, [$tuning_id])->{$tuning_id};

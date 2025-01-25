@@ -167,8 +167,7 @@ sub convert ($self, $symbols) {
     my $pos = pos($symbols);
     substr $symbols, $pos, 0, '-->';
     $pos++;
-    # TODO: print only the relevant part of symbols here
-    die "Invalid syntax in the input at character ${pos}: ${symbols}\n";
+    die "Invalid syntax in the input music at character ${pos}: ${symbols}\n";
   }
   return wantarray ? @out : \@out;
 }

@@ -44,7 +44,7 @@ Readonly my %NOTE_TO_TONE => (
   H => 11,
 );
 
-# TODO support unicode representation of the sharp (♯), flat (♭), natural (♮)
+# TODO support Unicode representation of the sharp (♯), flat (♭), natural (♮)
 # and clef (𝄞) signs.
 
 Readonly my %ACCIDENTAL_TO_ALTERATION => (
@@ -93,7 +93,9 @@ Readonly my %KEY_TO_ALTERATION => (
   'C#' => 7,
 );
 
-Readonly my $NOTE_NAME_RE => qr/ do|Do|ut|Ut|ré|Ré|re|Re|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si | [A-H] /x;
+Readonly my @NOTE_NAMES => qw(do Do ut Ut ré Ré re Re mi Mi fa Fa sol Sol la La si Si);
+Readonly my $JOINED_NOTE_NAMES => join('|', @NOTE_NAMES);
+Readonly my $NOTE_NAME_RE => qr/ ${JOINED_NOTE_NAMES} | [A-H] /x;
 
 Readonly my $BASE_OCTAVE => 4;
 Readonly my $TONES_PER_SCALE => 12;

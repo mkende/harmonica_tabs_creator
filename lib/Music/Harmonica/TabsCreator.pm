@@ -13,7 +13,7 @@ use Music::Harmonica::TabsCreator::TabParser;
 use Readonly;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 our @EXPORT_OK = qw(tune_to_tab get_tuning_details tune_to_tab_rendered
     transpose_tab transpose_tab_rendered list_tunings);

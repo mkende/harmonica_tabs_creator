@@ -4,15 +4,9 @@ A program to create harmonica tabs from a textual representation of a tune. It
 supports multiple types of harmonica and tuning and will automatically try all
 possible transpositions for the tune.
 
+**Try it out at https://harmonica-tabs-creator.com!**
+
 ## Installation
-
-### Pre-compiled binaries for Windows and Linux
-
-You can download portable versions of `harmonica-tabs-creator` for Windows and
-Linux on the
-[releases page](https://github.com/mkende/harmonica_tabs_creator/releases).
-
-### Installation from the Perl package manager
 
 To install `harmonica-tabs-creator` you need Perl (which is already installed on
 most Linux distributions) and you need the `cpanm` Perl package manager. If

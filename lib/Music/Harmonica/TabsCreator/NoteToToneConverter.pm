@@ -27,6 +27,7 @@ sub new ($class, %options) {
 Readonly my %NOTE_TO_TONE => (
   C => 0,
   Do => 0,
+  Ut => 0,
   D => 2,
   'Re' => 2,
   'Ré' => 2,
@@ -89,7 +90,7 @@ Readonly my %KEY_TO_ALTERATION => (
   'C#' => 7,
 );
 
-Readonly my $NOTE_NAME_RE => qr/ do|Do|ré|Ré|re|Re|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si | [A-H] /x;
+Readonly my $NOTE_NAME_RE => qr/ do|Do|ut|Ut|ré|Ré|re|Re|mi|Mi|fa|Fa|sol|Sol|la|La|si|Si | [A-H] /x;
 
 Readonly my $BASE_OCTAVE => 4;
 Readonly my $TONES_PER_SCALE => 12;

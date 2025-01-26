@@ -8,7 +8,7 @@ use utf8;
 use List::Util qw(any);
 use Readonly;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 # This class converts written note (accepting various syntax for the notes) into
 # tones (degrees) relative to the key of C4.

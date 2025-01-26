@@ -2,8 +2,8 @@ Revision history for Perl distribution Music-Harmonica-Tabs
 
 0.05 - ??
  - Minor rendering improvements.
- - Add support for the "Melody Maker" tuning (and, in the process, support
-   tunings not written in the key of C).
+ - Support tunings not written in the key of C.
+ - Add support for the "Melody Maker" and natural minor tuning.
 
 0.04 - 2025-01-25
  - Support re in addition to ré for the D note in the input music.

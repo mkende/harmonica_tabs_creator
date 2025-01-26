@@ -33,7 +33,7 @@ sub parse ($self, $tab) {
       next;
     }
 
-    if ($tab =~ m/\G#\s*(.*?(?:\r\n|\n|\r|\v|\z))/gc) {
+    if ($tab =~ m/ \G \# \s* ( .*? (?:\r\n|\n|\r|\v|\z) )/xgc) {
       push @out, $1;
       next;
     }

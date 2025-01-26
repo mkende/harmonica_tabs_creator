@@ -30,24 +30,37 @@ Readonly my %ALL_TUNINGS => (
   # Richter scale) we always use only the last appearance one when rendering a
   # tab (but other appearances are still used when reading a tab).
   richter => {
-    tags => [qw(diatonic 10-holes)],
-    name => 'Richter major diatonic',
+    tags => [qw(diatonic 10-holes major)],
+    name => 'Richter',
     tab => [qw(  1  -1 2 -2  3  -3  4 -4 5  -5 6  -6 7  -7 8  -8 9  -9 10 -10)],
     notes => [qw(C4 D4 E4 G4 G4 B4 C5 D5 E5 F5 G5 A5 C6 B5 E6 D6 G6 F6 C7 A6)],
     bends => [qw(0  1  0  2  0  3  0  1  0  0  0  1  0  0  1  0  1  0  2  0)],
     key => 'C',
   },
   melody_maker => {
-    tags => [qw(diatonic 10-holes)],
+    tags => [qw(diatonic 10-holes major)],
     name => 'Melody Maker',
     tab => [qw(  1  -1 2 -2  3  -3  4 -4 5  -5  6  -6 7  -7 8  -8 9  -9  10 -10)],
     notes => [qw(C4 D4 E4 G4 A4 B4 C5 D5 E5 F+5 G5 A5 C6 B5 E6 D6 G6 F+6 C7 A6)],
     bends => [qw(0  1  0  2  0  1  0  1  0  1   0  1  0  0  1  0  0  0   2  0)],
     key => 'G',
+    # TODO: Only the C, D, Eb, E, F, G, A and Bb keys exist (not the Db, F#, Ab
+    # and B ones). But nothing prevents the missing ones from being generated
+    # for now.
+  },
+  natural_minor => {
+    tags => [qw(diatonic 10-holes minor)],
+    name => 'natural minor',
+    tab => [qw(  1  -1 2  -2  3  -3  4  -4 5   -5 6  -6 7  -7  8   -8 9  -9 10 -10)],
+    notes => [qw(C4 D4 Eb4 G4 G4 Bb4 C5 D5 Eb5 F5 G5 A5 C6 Bb5 Eb6 D6 G6 F6 C7 A6)],
+    bends => [qw(0  1  0   3  0  2   0  1  0   1  0  1  1  0   0   0  1  0  2  0)],
+    # TODO: The real harmonica is labelled as Gm but we don’t support that
+    # annotation for now.
+    key => 'G',
   },
   harmonic_minor => {
-    tags => [qw(diatonic 10-holes)],
-    name => 'Harmonic minor',
+    tags => [qw(diatonic 10-holes minor)],
+    name => 'harmonic minor',
     tab => [qw(1  -1 2   -2 3  -3 4 -4  5   -5 6  -6  7  -7 8   -8 9  -9 10 -10)],
     notes => [qw(C4 D4 Eb4 G4 G4 B4 C5 D5 Eb5 F5 G5 Ab5 C6 B5 Eb6 D6 G6 F6 C7 Ab6)],
     bends => [qw(0  1  0   3  0  3  0  1  0   1  0  0   0  0  0   0  1  0  3  0)],

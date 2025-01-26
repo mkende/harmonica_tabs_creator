@@ -37,6 +37,14 @@ Readonly my %ALL_TUNINGS => (
     bends => [qw(0  1  0  2  0  3  0  1  0  0  0  1  0  0  1  0  1  0  2  0)],
     key => 'C',
   },
+  melody_maker => {
+    tags => [qw(diatonic 10-holes)],
+    name => 'Melody Maker',
+    tab => [qw(  1  -1 2 -2  3  -3  4 -4 5  -5  6  -6 7  -7 8  -8 9  -9  10 -10)],
+    notes => [qw(C4 D4 E4 G4 A4 B4 C5 D5 E5 F+5 G5 A5 C6 B5 E6 D6 G6 F+6 C7 A6)],
+    bends => [qw(0  1  0  2  0  1  0  1  0  1   0  1  0  0  1  0  0  0   2  0)],
+    key => 'G',
+  },
   harmonic_minor => {
     tags => [qw(diatonic 10-holes)],
     name => 'Harmonic minor',

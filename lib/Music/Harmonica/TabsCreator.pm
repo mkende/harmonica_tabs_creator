@@ -302,6 +302,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 =item L<harmonica-tabs-creator>
 
+=item L<Online version|https://harmonica-tabs-creator.com>
+
 =back
 
 =cut

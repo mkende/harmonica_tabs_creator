@@ -136,7 +136,7 @@ sub convert ($self, $symbols) {
       next;
     }
 
-    if ($symbols =~ m/\G(#.*?(?:\r\n|\n|\r|\v|\z))/gc) {
+    if ($symbols =~ m/\G#\s*(.*?(?:\r\n|\n|\r|\v|\z))/gc) {
       push @out, $1;
       next;
     }

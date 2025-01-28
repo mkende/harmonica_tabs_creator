@@ -164,7 +164,7 @@ sub render_tabs (%tabs) {
           $str_tab .= ($was_nl ? '    ' : ' ').$t;
           $was_nl = $t =~ m/\v\z/;
         }
-        $str_tab =~ s/(\h|\v)+\Z//;
+        $str_tab =~ s/\A\s+|\s+\Z//g;
         $out .= ${str_tab}."\n\n";
       }
     }

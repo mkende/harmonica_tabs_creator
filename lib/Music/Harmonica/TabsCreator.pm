@@ -31,7 +31,7 @@ sub extend_chromatic_tuning ($tuning, $fix) {
     push @{$tuning->{notes}}, "${1}#${2}";
   }
   @{$tuning->{bends}} = ((1) x ($size +1), (0) x ($size + 1));
-  $tuning->{max_offset} = $TONES_PER_SCALE - 1;
+  $tuning->{is_chromatic} = 1;
   if ($fix) {
     # Some brand use a D instead of a C (== B#) as the draw slide in, to give
     # one more note (instead of duplicating the C). It’s not really an issue if
@@ -190,7 +190,7 @@ sub generate_tunings ($max_bends, $tunings) {
         # TODO: this won’t work once we have chromatic harmonicas
         push @{$out{$k}{tabs}}, bend($tab, $b);
       }
-      $out{$k}{max_offset} = $v->{max_offset} if exists $v->{max_offset};
+      $out{$k}{is_chromatic} = $v->{is_chromatic};
     }
   }
   return \%out;
@@ -270,7 +270,7 @@ sub match_notes_to_tuning ($tones, $tuning) {
 
   # max_offset is set for Chromatic harmonicas where to avoid generating the
   # same thing over and over again, transposed by a full octave.
-  $o_max = min($o_max, $o_min + $tuning->{max_offset}) if exists $tuning->{max_offset};
+  $o_max = min($o_max, $o_min + $TONES_PER_SCALE - 1) if $tuning->{is_chromatic};
 
   for my $o ($o_min .. $o_max) { # (min($o_max, $o_min + $TONES_PER_SCALE - 1))) {
     my @tab = tab_from_tones($tones, $o, %scale_tones);

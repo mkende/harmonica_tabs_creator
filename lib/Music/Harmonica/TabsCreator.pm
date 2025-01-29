@@ -23,22 +23,30 @@ our @EXPORT_OK = qw(tune_to_tab get_tuning_details tune_to_tab_rendered
 
 Readonly my $TONES_PER_SCALE => 12;
 
+# TODO: add a param so that the output prefers a tab starting at 1 rather than
+# 1° when possible.
 sub extend_chromatic_tuning ($tuning, $fix) {
-  my $size = $#{$tuning->{notes}};
-  for my $i (0 .. $size) {
+  my $size = @{$tuning->{notes}};
+  for my $i (0 .. $size - 1) {
     push @{$tuning->{tabs}}, sprintf('(%s)', $tuning->{tabs}[$i]);
-    $tuning->{notes}[$i] =~ m/^(\w)(\d)$/ or die "Unexpected error\n";
+    $tuning->{notes}[$i] =~ m/^(\w)(\d)$/ or die "Unexpected error";
     push @{$tuning->{notes}}, "${1}#${2}";
   }
-  @{$tuning->{bends}} = ((1) x ($size +1), (0) x ($size + 1));
-  $tuning->{is_chromatic} = 1;
   if ($fix) {
     # Some brand use a D instead of a C (== B#) as the draw slide in, to give
     # one more note (instead of duplicating the C). It’s not really an issue if
     # the harmonica does not have it as the missing C is there anyway on the
     # harmonica (and worst case, the tab can’t be played if it requires (-12)).
-    die "Unexpected error\n" unless substr($tuning->{notes}[-1], 0, 2, 'D') eq 'B#';
+    die "Unexpected error" unless $tuning->{notes}[-1] =~ m/^B#(\d+)$/;
+    $tuning->{notes}[-1] = 'D'.($1 + 1);
   }
+  # We put the notes with the slides pushed-in at the beginning of the array so
+  # that equivalent notes with the slide out, which comes later, are used by
+  # default.
+  push @{$tuning->{tabs}}, splice(@{$tuning->{tabs}}, 0, $size);
+  push @{$tuning->{notes}}, splice(@{$tuning->{notes}}, 0, $size);
+  @{$tuning->{bends}} = ((1) x ($size +1), (0) x ($size));
+  $tuning->{is_chromatic} = 1;
   return $tuning;
 }
 

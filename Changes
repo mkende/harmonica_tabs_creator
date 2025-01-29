@@ -1,7 +1,7 @@
 Revision history for Perl distribution Music-Harmonica-Tabs
 
 1.01 - ??
- - Add support for Chromatic Harmonicas.
+ - Add initial support for Chromatic Harmonicas.
  - Minor parsing fix.
  - Minor rendering improvements.
 

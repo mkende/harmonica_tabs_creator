@@ -23,6 +23,24 @@ our @EXPORT_OK = qw(tune_to_tab get_tuning_details tune_to_tab_rendered
 
 Readonly my $TONES_PER_SCALE => 12;
 
+sub extend_chromatic_tuning ($tuning, $fix) {
+  my $size = $#{$tuning->{notes}};
+  for my $i (0 .. $size) {
+    push @{$tuning->{tabs}}, sprintf('(%s)', $tuning->{tabs}[$i]);
+    $tuning->{notes}[$i] =~ m/^(\w)(\d)$/ or die "Unexpected error\n";
+    push @{$tuning->{notes}}, "${1}#${2}";
+  }
+  @{$tuning->{bends}} = (1 x $size, 0 x $size);
+  if ($fix) {
+    # Some brand use a D instead of a C (== B#) as the draw slide in, to give
+    # one more note (instead of duplicating the C). It’s not really an issue if
+    # the harmonica does not have it as the missing C is there anyway on the
+    # harmonica (and worst case, the tab can’t be played if it requires (-12)).
+    die "Unexpected error\n" unless substr($tuning->{notes}[-1], 0, 2, 'D') eq 'B#';
+  }
+  return $tuning;
+}
+
 Readonly my %ALL_TUNINGS => (
   # Written in the key of C to match the default key used in the note_to_tone
   # function.
@@ -66,6 +84,48 @@ Readonly my %ALL_TUNINGS => (
     bends => [qw( 0  1   0  3  0  3  0  1   0  1  0   0  0  0   0  0  1  0  3   0)],
     key => 'C',
   },
+  solo_8 => extend_chromatic_tuning({
+    tags => [qw(chromatic 8-holes major)],
+    name => 'Solo 8 – Chrometta',
+    tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8)],
+    notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5)],
+    key => 'C',
+  }, 0),
+  chrometta_10 => extend_chromatic_tuning({
+    tags => [qw(chromatic 10-holes major)],
+    name => 'Chrometta 10',
+    tabs => [qw(  3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8)],
+    notes => [qw(G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5)],
+    key => 'C',
+  }, 0),
+  solo_10 => extend_chromatic_tuning({
+    tags => [qw(chromatic 10-holes major)],
+    name => 'Solo 10',
+    tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10)],
+    notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6)],
+    key => 'C',
+  }, 0),
+  solo_12 => extend_chromatic_tuning({
+    tags => [qw(chromatic 12-holes major)],
+    name => 'Solo 12',
+    tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
+    notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
+    key => 'C',
+  }, 1),
+  solo_14 => extend_chromatic_tuning({
+    tags => [qw(chromatic 14-holes major)],
+    name => 'Solo 14',
+    tabs => [qw(  3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
+    notes => [qw(G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
+    key => 'C',
+  }, 1),
+  solo_16 => extend_chromatic_tuning({
+    tags => [qw(chromatic 16-holes major)],
+    name => 'Solo 16',
+    tabs => [qw(  1° -1° 2° -2° 3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
+    notes => [qw(C3  D3 E3  F3 G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
+    key => 'C',
+  }, 1),
 );
 
 # We can’t use qw() because of the # that triggers a warning.
@@ -97,6 +157,18 @@ sub transpose_tab ($tab, $tuning_id, $key, %options) {
   return find_matching_tuning(\@tones, $tunings);
 }
 
+# Given the text representation of one note, and a bend level, generate the text
+# of the bended note.
+sub bend ($tab, $b) {
+  return $tab if $b == 0;
+  my $bend = ('"' x ($b / 2)).("'" x ($b % 2)); 
+  if ($tab =~ m/^\((.+)\)$/) {
+    return "(${1}${bend})";
+  } else {
+    return ${tab}.${bend};
+  }
+}
+
 # We take the global %ALL_TUNINGS and generate a %tunings hash with the same
 # keys but where the values only have the tab and a new matching 'tone' entries.
 # But we have added the notes corresponding to the allowed bends.
@@ -115,7 +187,7 @@ sub generate_tunings ($max_bends, $tunings) {
       for my $b (0 .. min($max_bends, $v->{bends}[$i])) {
         push @{$out{$k}{tones}}, $base_tone - $b;
         # TODO: this won’t work once we have chromatic harmonicas
-        push @{$out{$k}{tabs}}, $tab.('"' x ($b / 2)).("'" x ($b % 2));
+        push @{$out{$k}{tabs}}, bend($tab, $b);
       }
     }
   }

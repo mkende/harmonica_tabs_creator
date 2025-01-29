@@ -135,11 +135,19 @@ Readonly my %KEYS_TO_TONE => map { $KEYS_OFFSET[$_] => $_ } 0 .. $#KEYS_OFFSET;
 
 Readonly my $MAX_BENDS => 6;  # Probably higher than any realistic value.
 
+sub get_preferred_key (%options) {
+  my $key = $options{preferred_key} // 'C';
+  my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
+  my @key_tone = eval { $note_converter->convert($key) };
+  die "Invalid key: $key\n" if $@ || @key_tone != 1;
+  return $key_tone[0] % $TONES_PER_SCALE;
+}
+
 sub tune_to_tab ($sheet, %options) {
   my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
   my @tones = $note_converter->convert($sheet);
   my $tunings = generate_tunings($options{max_bends} // 0, $options{tunings} // []);
-  return find_matching_tuning(\@tones, $tunings);
+  return find_matching_tuning(\@tones, $tunings, get_preferred_key(%options));
 }
 
 sub transpose_tab ($tab, $tuning_id, $key, %options) {
@@ -151,11 +159,11 @@ sub transpose_tab ($tab, $tuning_id, $key, %options) {
   my @tones = $parser->parse($tab);
   my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
   my @key_tone = eval { $note_converter->convert($key) };
-  return "Invalid key: $key" if $@ || @key_tone != 1;
+  die "Invalid key: $key\n" if $@ || @key_tone != 1;
   my $key_tone = $key_tone[0];
   @tones = map { looks_like_number($_) ? $_ + $key_tone : $_ } @tones;
   my $tunings = generate_tunings($options{max_bends} // 0, $options{tunings} // []);
-  return find_matching_tuning(\@tones, $tunings);
+  return find_matching_tuning(\@tones, $tunings, get_preferred_key(%options));
 }
 
 # Given the text representation of one note, and a bend level, generate the text
@@ -195,10 +203,10 @@ sub generate_tunings ($max_bends, $tunings) {
   return \%out;
 }
 
-sub find_matching_tuning ($tones, $tunings) {
+sub find_matching_tuning ($tones, $tunings, $preferred_key) {
   my %all_matches;
   while (my ($k, $v) = each %{$tunings}) {
-    my @matches = match_notes_to_tuning($tones, $v);
+    my @matches = match_notes_to_tuning($tones, $v, $preferred_key);
     for my $m (@matches) {
       push @{$all_matches{$k}{$m->[1]}}, $m->[0];
     }
@@ -258,7 +266,7 @@ sub list_tunings () {
 # Given all the tones (with C0 = 0) of a melody and the data of a given
 # harmonica tuning, returns whether the melody can be played on this
 # harmonica and, if yes, the octave shift to apply to the melody.
-sub match_notes_to_tuning ($tones, $tuning) {
+sub match_notes_to_tuning ($tones, $tuning, $preferred_key) {
   my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
   my ($scale_min, $scale_max) = (min(@{$tuning->{tones}}), max(@{$tuning->{tones}}));
   my @real_tones = grep { looks_like_number($_) } @{$tones};
@@ -273,7 +281,14 @@ sub match_notes_to_tuning ($tones, $tuning) {
 
   for my $o ($o_min .. $o_max) { # (min($o_max, $o_min + $TONES_PER_SCALE - 1))) {
     my @tab = tab_from_tones($tones, $o, %scale_tones);
-    push @matches, [\@tab, $KEYS_OFFSET[($TONES_PER_SCALE - $o) % $TONES_PER_SCALE]] if @tab;
+    if (@tab) {
+      my $key = ($TONES_PER_SCALE - $o) % $TONES_PER_SCALE;
+      my $match = [\@tab, $KEYS_OFFSET[$key]];
+      if ($tuning->{is_chromatic} && $key == $preferred_key) {
+        return $match;
+      }
+      push @matches, $match;
+    }
   }
   return @matches;
 }

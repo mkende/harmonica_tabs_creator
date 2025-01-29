@@ -32,7 +32,7 @@ Readonly my %ALL_TUNINGS => (
   richter => {
     tags => [qw(diatonic 10-holes major)],
     name => 'Richter',
-    tab => [qw(  1  -1 2 -2  3  -3  4 -4 5  -5 6  -6 7  -7 8  -8 9  -9 10 -10)],
+    tabs => [qw(  1  -1 2 -2  3  -3  4 -4 5  -5 6  -6 7  -7 8  -8 9  -9 10 -10)],
     notes => [qw(C4 D4 E4 G4 G4 B4 C5 D5 E5 F5 G5 A5 C6 B5 E6 D6 G6 F6 C7 A6)],
     bends => [qw(0  1  0  2  0  3  0  1  0  0  0  1  0  0  1  0  1  0  2  0)],
     key => 'C',
@@ -40,7 +40,7 @@ Readonly my %ALL_TUNINGS => (
   melody_maker => {
     tags => [qw(diatonic 10-holes major)],
     name => 'Melody Maker',
-    tab => [qw(  1  -1 2 -2  3  -3  4 -4 5  -5  6  -6 7  -7 8  -8 9  -9  10 -10)],
+    tabs => [qw(  1  -1 2 -2  3  -3  4 -4 5  -5  6  -6 7  -7 8  -8 9  -9  10 -10)],
     notes => [qw(C4 D4 E4 G4 A4 B4 C5 D5 E5 F+5 G5 A5 C6 B5 E6 D6 G6 F+6 C7 A6)],
     bends => [qw(0  1  0  2  0  1  0  1  0  1   0  1  0  0  1  0  0  0   2  0)],
     key => 'G',
@@ -51,7 +51,7 @@ Readonly my %ALL_TUNINGS => (
   natural_minor => {
     tags => [qw(diatonic 10-holes minor)],
     name => 'Natural Minor',
-    tab => [qw(  1  -1 2  -2  3  -3  4  -4 5   -5 6  -6 7  -7  8   -8 9  -9 10 -10)],
+    tabs => [qw(  1  -1 2  -2  3  -3  4  -4 5   -5 6  -6 7  -7  8   -8 9  -9 10 -10)],
     notes => [qw(C4 D4 Eb4 G4 G4 Bb4 C5 D5 Eb5 F5 G5 A5 C6 Bb5 Eb6 D6 G6 F6 C7 A6)],
     bends => [qw(0  1  0   3  0  2   0  1  0   1  0  1  1  0   0   0  1  0  2  0)],
     # TODO: The real harmonica is labelled as Gm but we don’t support that
@@ -61,7 +61,7 @@ Readonly my %ALL_TUNINGS => (
   harmonic_minor => {
     tags => [qw(diatonic 10-holes minor)],
     name => 'Harmonic Minor',
-    tab => [qw(1  -1 2   -2 3  -3 4 -4  5   -5 6  -6  7  -7 8   -8 9  -9 10 -10)],
+    tabs => [qw(1  -1 2   -2 3  -3 4 -4  5   -5 6  -6  7  -7 8   -8 9  -9 10 -10)],
     notes => [qw(C4 D4 Eb4 G4 G4 B4 C5 D5 Eb5 F5 G5 Ab5 C6 B5 Eb6 D6 G6 F6 C7 Ab6)],
     bends => [qw(0  1  0   3  0  3  0  1  0   1  0  0   0  0  0   0  1  0  3  0)],
     key => 'C',
@@ -85,7 +85,7 @@ sub transpose_tab ($tab, $tuning_id, $key, %options) {
   die "Unknown tuning: $tuning_id\n" unless exists $ALL_TUNINGS{$tuning_id};
   # For the input, we accept any level of bending.
   my $tuning = generate_tunings($MAX_BENDS, [$tuning_id])->{$tuning_id};
-  my %tab_to_tones = map { $tuning->{tab}[$_] => $tuning->{tones}[$_] } 0 .. $#{$tuning->{tab}};
+  my %tab_to_tones = map { $tuning->{tabs}[$_] => $tuning->{tones}[$_] } 0 .. $#{$tuning->{tabs}};
   my $parser = Music::Harmonica::TabsCreator::TabParser->new(\%tab_to_tones);
   my @tones = $parser->parse($tab);
   my $note_converter = Music::Harmonica::TabsCreator::NoteToToneConverter->new();
@@ -111,11 +111,11 @@ sub generate_tunings ($max_bends, $tunings) {
       # offset we will compute in match_notes_to_tuning is assuming that the
       # tuning was given for a C-harmonica.
       $base_tone -= $KEYS_TO_TONE{$v->{key}};
-      my $tab = $v->{tab}[$i];
+      my $tab = $v->{tabs}[$i];
       for my $b (0 .. min($max_bends, $v->{bends}[$i])) {
         push @{$out{$k}{tones}}, $base_tone - $b;
         # TODO: this won’t work once we have chromatic harmonicas
-        push @{$out{$k}{tab}}, $tab.('"' x ($b / 2)).("'" x ($b % 2));
+        push @{$out{$k}{tabs}}, $tab.('"' x ($b / 2)).("'" x ($b % 2));
       }
     }
   }
@@ -190,7 +190,7 @@ sub match_notes_to_tuning ($tones, $tuning) {
   my ($scale_min, $scale_max) = (min(@{$tuning->{tones}}), max(@{$tuning->{tones}}));
   my @real_tones = grep { looks_like_number($_) } @{$tones};
   my ($tones_min, $tones_max) = (min(@real_tones), max(@real_tones));
-  my %scale_tones = map { $tuning->{tones}[$_] => $tuning->{tab}[$_] } 0 .. $#{$tuning->{tones}};
+  my %scale_tones = map { $tuning->{tones}[$_] => $tuning->{tabs}[$_] } 0 .. $#{$tuning->{tones}};
   my ($o_min, $o_max) = ($scale_min - $tones_min, $scale_max - $tones_max);
   my @matches;
 

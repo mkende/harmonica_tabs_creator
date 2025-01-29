@@ -187,7 +187,6 @@ sub generate_tunings ($max_bends, $tunings) {
       my $tab = $v->{tabs}[$i];
       for my $b (0 .. min($max_bends, $v->{bends}[$i])) {
         push @{$out{$k}{tones}}, $base_tone - $b;
-        # TODO: this won’t work once we have chromatic harmonicas
         push @{$out{$k}{tabs}}, bend($tab, $b);
       }
       $out{$k}{is_chromatic} = $v->{is_chromatic};

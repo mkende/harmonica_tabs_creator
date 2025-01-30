@@ -127,6 +127,7 @@ Readonly my %ALL_TUNINGS => (
     tabs => [qw(  3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
     notes => [qw(G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
     key => 'C',
+    avoid_tones => 5,
   }, 1),
   solo_16 => extend_chromatic_tuning({
     tags => [qw(chromatic 16-holes major)],
@@ -134,6 +135,7 @@ Readonly my %ALL_TUNINGS => (
     tabs => [qw(  1° -1° 2° -2° 3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
     notes => [qw(C3  D3 E3  F3 G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
     key => 'C',
+    avoid_tones => 12,
   }, 1),
 );
 
@@ -206,6 +208,7 @@ sub generate_tunings ($max_bends, $tunings) {
         push @{$out{$k}{tabs}}, bend($tab, $b);
       }
       $out{$k}{is_chromatic} = $v->{is_chromatic};
+      $out{$k}{avoid_tones} = $v->{avoid_tones} if exists $v->{avoid_tones};
     }
   }
   return \%out;
@@ -283,11 +286,21 @@ sub match_notes_to_tuning ($tones, $tuning, $preferred_key) {
   my ($o_min, $o_max) = ($scale_min - $tones_min, $scale_max - $tones_max);
   my @matches;
 
-  # max_offset is set for Chromatic harmonicas where to avoid generating the
+  # max_offset is set for Chromatic harmonicas to avoid generating the
   # same thing over and over again, transposed by a full octave.
-  $o_max = min($o_max, $o_min + $TONES_PER_SCALE - 1) if $tuning->{is_chromatic};
+  my $o_max_low = $o_max;
+  $o_max_low = min($o_max, $o_min + $TONES_PER_SCALE - 1) if $tuning->{is_chromatic};
+  # For some tunings we prefer not to generate the first few tones (typically
+  # anything before middle C on a chromatic harmonica). This settings offset the
+  # search pattern if possible. We note that if is_chromatic was not set, then
+  # this will do nothing because $o_max == $o_max_low.
+  if (exists $tuning->{avoid_tones}) {
+    my $o = min($tuning->{avoid_tones}, $o_max - $o_max_low);
+    $o_max_low += $o;
+    $o_min += $o;
+  }
 
-  for my $o ($o_min .. $o_max) { # (min($o_max, $o_min + $TONES_PER_SCALE - 1))) {
+  for my $o ($o_min .. $o_max_low) { # (min($o_max, $o_min + $TONES_PER_SCALE - 1))) {
     my @tab = tab_from_tones($tones, $o, %scale_tones);
     if (@tab) {
       my $key = ($TONES_PER_SCALE - $o) % $TONES_PER_SCALE;

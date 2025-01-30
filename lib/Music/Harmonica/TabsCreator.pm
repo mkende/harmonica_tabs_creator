@@ -29,7 +29,7 @@ sub extend_chromatic_tuning ($tuning, $fix) {
   my $size = @{$tuning->{notes}};
   for my $i (0 .. $size - 1) {
     push @{$tuning->{tabs}}, sprintf('(%s)', $tuning->{tabs}[$i]);
-    $tuning->{notes}[$i] =~ m/^(\w)(\d)$/ or die "Unexpected error";
+    $tuning->{notes}[$i] =~ m/^(\w)(\d)$/ or die 'Unexpected error';  ## no critic (RequireCarping)
     push @{$tuning->{notes}}, "${1}#${2}";
   }
   if ($fix) {
@@ -37,7 +37,7 @@ sub extend_chromatic_tuning ($tuning, $fix) {
     # one more note (instead of duplicating the C). It’s not really an issue if
     # the harmonica does not have it as the missing C is there anyway on the
     # harmonica (and worst case, the tab can’t be played if it requires (-12)).
-    die "Unexpected error" unless $tuning->{notes}[-1] =~ m/^B#(\d+)$/;
+    die 'Unexpected error' unless $tuning->{notes}[-1] =~ m/^B#(\d+)$/;  ## no critic (RequireCarping)
     $tuning->{notes}[-1] = 'D'.($1 + 1);
   }
   # We put the notes with the slides pushed-in at the beginning of the array so
@@ -45,11 +45,13 @@ sub extend_chromatic_tuning ($tuning, $fix) {
   # default.
   push @{$tuning->{tabs}}, splice(@{$tuning->{tabs}}, 0, $size);
   push @{$tuning->{notes}}, splice(@{$tuning->{notes}}, 0, $size);
-  @{$tuning->{bends}} = ((1) x ($size +1), (0) x ($size));
+  @{$tuning->{bends}} = ((1) x ($size + 1), (0) x ($size));
   $tuning->{is_chromatic} = 1;
   return $tuning;
 }
 
+#<<<  let’s not run perltidy over this portion as I want to keep the arrays
+# aligned for better readability.
 Readonly my %ALL_TUNINGS => (
   # Written in the key of C to match the default key used in the note_to_tone
   # function.
@@ -94,50 +96,63 @@ Readonly my %ALL_TUNINGS => (
     key => 'C',
   },
   solo_8 => extend_chromatic_tuning({
-    tags => [qw(chromatic 8-holes major)],
-    name => 'Solo 8 – Chrometta',
-    tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8)],
-    notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5)],
-    key => 'C',
-  }, 0),
+      tags => [qw(chromatic 8-holes major)],
+      name => 'Solo 8 – Chrometta',
+      tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8)],
+      notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5)],
+      key => 'C',
+    },
+    0
+  ),
   chrometta_10 => extend_chromatic_tuning({
-    tags => [qw(chromatic 10-holes major)],
-    name => 'Chrometta 10',
-    tabs => [qw(  3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8)],
-    notes => [qw(G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5)],
-    key => 'C',
-  }, 0),
+      tags => [qw(chromatic 10-holes major)],
+      name => 'Chrometta 10',
+      tabs => [qw(  3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8)],
+      notes => [qw(G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5)],
+      key => 'C',
+    },
+    0
+  ),
   solo_10 => extend_chromatic_tuning({
-    tags => [qw(chromatic 10-holes major)],
-    name => 'Solo 10',
-    tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10)],
-    notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6)],
-    key => 'C',
-  }, 0),
+      tags => [qw(chromatic 10-holes major)],
+      name => 'Solo 10',
+      tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10)],
+      notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6)],
+      key => 'C',
+    },
+    0
+  ),
   solo_12 => extend_chromatic_tuning({
-    tags => [qw(chromatic 12-holes major)],
-    name => 'Solo 12',
-    tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
-    notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
-    key => 'C',
-  }, 1),
+      tags => [qw(chromatic 12-holes major)],
+      name => 'Solo 12',
+      tabs => [qw(  1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
+      notes =>[qw( C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
+      key => 'C',
+    },
+    1
+  ),
   solo_14 => extend_chromatic_tuning({
-    tags => [qw(chromatic 14-holes major)],
-    name => 'Solo 14',
-    tabs => [qw(  3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
-    notes => [qw(G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
-    key => 'C',
-    avoid_tones => 5,
-  }, 1),
+      tags => [qw(chromatic 14-holes major)],
+      name => 'Solo 14',
+      tabs => [qw(  3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
+      notes => [qw(G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
+      key => 'C',
+      avoid_tones => 5,
+    },
+    1
+  ),
   solo_16 => extend_chromatic_tuning({
-    tags => [qw(chromatic 16-holes major)],
-    name => 'Solo 16',
-    tabs => [qw(  1° -1° 2° -2° 3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
-    notes => [qw(C3  D3 E3  F3 G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
-    key => 'C',
-    avoid_tones => 12,
-  }, 1),
+      tags => [qw(chromatic 16-holes major)],
+      name => 'Solo 16',
+      tabs => [qw(  1° -1° 2° -2° 3° -3° 4° -4° 1 -1  2  -2 3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10  11 -11 12 -12)],
+      notes => [qw(C3  D3 E3  F3 G3  A3 C4  B3 C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6  G6  A6 C7  B6)],
+      key => 'C',
+      avoid_tones => 12,
+    },
+    1
+  ),
 );
+#>>>
 
 # We can’t use qw() because of the # that triggers a warning.
 Readonly my @KEYS_OFFSET => split / /, q(C Db D Eb E F F# G Ab A Bb B);
@@ -180,7 +195,7 @@ sub transpose_tab ($tab, $tuning_id, $key, %options) {
 # of the bended note.
 sub bend ($tab, $b) {
   return $tab if $b == 0;
-  my $bend = ('"' x ($b / 2)).("'" x ($b % 2)); 
+  my $bend = ('"' x ($b / 2)).("'" x ($b % 2));
   if ($tab =~ m/^\((.+)\)$/) {
     return "(${1}${bend})";
   } else {
@@ -300,7 +315,7 @@ sub match_notes_to_tuning ($tones, $tuning, $preferred_key) {
     $o_min += $o;
   }
 
-  for my $o ($o_min .. $o_max_low) { # (min($o_max, $o_min + $TONES_PER_SCALE - 1))) {
+  for my $o ($o_min .. $o_max_low) {  # (min($o_max, $o_min + $TONES_PER_SCALE - 1))) {
     my @tab = tab_from_tones($tones, $o, %scale_tones);
     if (@tab) {
       my $key = ($TONES_PER_SCALE - $o) % $TONES_PER_SCALE;

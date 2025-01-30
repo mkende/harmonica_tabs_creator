@@ -1,5 +1,6 @@
-personal_ws-1.1 en 41 
+personal_ws-1.1 en 46 
 Bb
+Chrometta
 Eb
 Gb
 KF
@@ -11,18 +12,22 @@ Pre
 ProhibitComplexVersion
 ProhibitMagicNumbers
 README
+RequireCarping
 RequireConstantVersion
 Ré
 TODO
 TabsCreator
 acc
+bended
 cpanm
 env
 gc
 helpfull
 md
 mgc
+param
 perl
+perltidy
 pos
 qw
 richter

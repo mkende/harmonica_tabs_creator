@@ -76,3 +76,6 @@ allowed_values = -1..2
 # This should be in the default above.
 [Variables::ProhibitPunctuationVars]
 allow = $@ $!
+
+# We are throwing object exception, which this policy does not recognise.
+[-ErrorHandling::RequireCarping]

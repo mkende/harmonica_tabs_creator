@@ -14,7 +14,7 @@ use Music::Harmonica::TabsCreator::Warning;
 use Readonly;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 our @EXPORT_OK = qw(tune_to_tab get_tuning_details tune_to_tab_rendered
     transpose_tab transpose_tab_rendered list_tunings);
@@ -101,7 +101,7 @@ Readonly my %ALL_TUNINGS => (
     tags => [qw(diatonic 10-holes major)],
     name => 'Solo',
     tabs => [qw(  1 -1  2 -2  3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10)],
-    notes => [qw(C4 D4 E4 F4 G4 A4 C5 A5 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6)],
+    notes => [qw(C4 D4 E4 F4 G4 A4 C5 B4 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6)],
     bends => [qw( 0  1  1  0  1  1  0  1  0  1  1  0  1  1  0  1  0  1  1   0)],
     # TODO: check the bends that are actually used, this is just my guess.
     key => 'C',

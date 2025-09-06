@@ -56,7 +56,7 @@ sub extend_chromatic_tuning ($tuning, $fix) {
 Readonly my %ALL_TUNINGS => (
   # Written in the key of C to match the default key used in the note_to_tone
   # function.
-  # Note that when we have the same note appear multiple time (like -2 and 3 in
+  # Note that when we have the same note appears multiple time (like -2 and 3 in
   # Richter scale) we always use only the last appearance one when rendering a
   # tab (but other appearances are still used when reading a tab).
   richter => {
@@ -94,6 +94,25 @@ Readonly my %ALL_TUNINGS => (
     tabs => [qw(  1 -1   2 -2  3 -3  4 -4   5 -5  6  -6  7 -7   8 -8  9 -9 10 -10)],
     notes => [qw(C4 D4 Eb4 G4 G4 B4 C5 D5 Eb5 F5 G5 Ab5 C6 B5 Eb6 D6 G6 F6 C7 Ab6)],
     bends => [qw( 0  1   0  3  0  3  0  1   0  1  0   0  0  0   0  0  1  0  3   0)],
+    # TODO: check the bends that are actually used, this is just my guess.
+    key => 'C',
+  },
+  solo => {
+    tags => [qw(diatonic 10-holes major)],
+    name => 'Solo',
+    tabs => [qw(  1 -1  2 -2  3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10)],
+    notes => [qw(C4 D4 E4 F4 G4 A4 C5 A5 C5 D5 E5 F5 G5 A5 C6 B5 C6 D6 E6  F6)],
+    bends => [qw( 0  1  1  0  1  1  0  1  0  1  1  0  1  1  0  1  0  1  1   0)],
+    # TODO: check the bends that are actually used, this is just my guess.
+    key => 'C',
+  },
+  paddy => {
+    tags => [qw(diatonic 10-holes major)],
+    name => 'Paddy Richter',
+    tabs => [qw(  1 -1  2 -2  3 -3  4 -4  5 -5  6 -6  7 -7  8 -8  9 -9 10 -10)],
+    notes => [qw(C4 D4 E4 G4 A4 B4 C5 D5 E5 F5 G5 A5 C6 B5 E6 D6 G6 F6 C7  A6)],
+    bends => [qw( 0  1  0  2  1  1  0  1  0  0  0  1  0  0  1  0  1  0  2   0)],
+    # TODO: check the bends that are actually used, this is just my guess.
     key => 'C',
   },
   solo_8 => extend_chromatic_tuning({
@@ -153,10 +172,18 @@ Readonly my %ALL_TUNINGS => (
     1
   ),
   xylophone => {
-    tags => [qw(diatonic)],
+    tags => [qw(diatonic 12-bars major)],
     name => 'Xylophone',
     tabs => [qw(  1  2  3  4  5  6  7  8  9 10 11 12)],
     notes => [qw(C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5)],
+    bends => [qw( 0  0  0  0  0  0  0  0  0  0  0  0)],
+    key => 'C',
+  },
+  triola => {
+    tags => [qw(diatonic 12-notes major)],
+    name => 'Triola',
+    tabs => [qw(  1  2  3  4  5  6  7  8  9 10 11 12)],
+    notes => [qw(G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5)],
     bends => [qw( 0  0  0  0  0  0  0  0  0  0  0  0)],
     key => 'C',
   },

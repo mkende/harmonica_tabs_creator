@@ -1,5 +1,9 @@
 Revision history for Perl distribution Music-Harmonica-Tabs
 
+1.03 - ??
+ - Add a couple more diatonic tunings.
+ - Add  support for the Triola.
+
 1.02 - 2025-03-26
  - Catch a minor error when the input music does not contain any note to avoid
    some warnings.

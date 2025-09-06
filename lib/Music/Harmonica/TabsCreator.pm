@@ -7,14 +7,15 @@ use utf8;
 
 use English;
 use Exporter qw(import);
-use List::Util qw(min max none);
+use List::MoreUtils qw(first_index);
+use List::Util qw(min max none any);
 use Music::Harmonica::TabsCreator::NoteToToneConverter;
 use Music::Harmonica::TabsCreator::TabParser;
 use Music::Harmonica::TabsCreator::Warning;
 use Readonly;
 use Scalar::Util qw(looks_like_number);
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 our @EXPORT_OK = qw(tune_to_tab get_tuning_details tune_to_tab_rendered
     transpose_tab transpose_tab_rendered list_tunings);
@@ -172,7 +173,7 @@ Readonly my %ALL_TUNINGS => (
     1
   ),
   xylophone => {
-    tags => [qw(diatonic 12-bars major)],
+    tags => [qw(diatonic 12-bars major other)],
     name => 'Xylophone',
     tabs => [qw(  1  2  3  4  5  6  7  8  9 10 11 12)],
     notes => [qw(C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5)],
@@ -180,7 +181,7 @@ Readonly my %ALL_TUNINGS => (
     key => 'C',
   },
   triola => {
-    tags => [qw(diatonic 12-notes major)],
+    tags => [qw(diatonic 12-notes major other)],
     name => 'Triola',
     tabs => [qw(  1  2  3  4  5  6  7  8  9 10 11 12)],
     notes => [qw(G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5)],
@@ -297,7 +298,14 @@ sub render_tabs (%tabs) {
 
   for my $type (sort keys %tabs) {
     my %details = get_tuning_details($type);
-    $out .= sprintf "For %s %s tuning harmonicas:\n", join(' ', @{$details{tags}}), $details{name};
+    my @tags = @{$details{tags}};
+    my $other_idx = first_index { $_ eq 'other' } @tags;
+    if ($other_idx == -1) {
+      $out .= sprintf "For %s %s tuning harmonicas:\n", join(' ', @tags), $details{name};
+    } else {
+      splice @tags, $other_idx, 1;
+      $out .= sprintf "For %s %s:\n", join(' ', @tags), $details{name};
+    }
     for my $key (sort keys %{$tabs{$type}}) {
       $out .= "  In the key of ${key}:\n";
       for my $tab (@{$tabs{$type}{$key}}) {

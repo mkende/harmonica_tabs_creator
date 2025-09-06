@@ -1,5 +1,8 @@
 Revision history for Perl distribution Music-Harmonica-Tabs
 
+1.05 - 2025-09-06
+ - Set a tag "other" on tunings that are not harmonicas.
+
 1.04 - 2025-09-06
  - Fix a typo in the solo tuning definition.
 

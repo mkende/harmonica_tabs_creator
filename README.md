@@ -32,9 +32,10 @@ sudo cpanm Music::Harmonica::TabsCreator -n -L /usr/local --man-pages --install-
 
 Notes are represented either with the standard notation (C, D, E, F, G, A, B)
 or with the solfege notation (Do, Re, Mi, Fa, Sol, La, Si). The accidentals
-are represented with the symbols `#` (sharp) and `b` (flat). The octave is
-represented with a number for an absolute octave (the default one is 5) or
-with the symbols `'` (one octave higher) and `,` (one octave lower).
+are represented with the symbols `#` (sharp) and `b` (flat) following the note
+name immediately (without space). The octave is represented with a number for an
+absolute octave (the default one is 5) or with the symbols `'` (one octave
+higher) and `,` (one octave lower).
 
 The current default octave can be modified using the `>` and `<`
 commands. For example `>` will increase the default octave by one, and
@@ -61,3 +62,6 @@ another key is encountered. A single `K` can be used to go back to the default
 C-major key.
 
 Note that whatever keys is used, an octave always starts with the `C` note.
+
+When a key is used, you can use a natural `♮` sign (or the sign `=`) after a
+note to cancel any alteration from the key.
